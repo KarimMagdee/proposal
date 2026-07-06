@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ADRES Centralized Zoho CRM — Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  html[data-theme="dark"]{
+    --bg-grad:#070912;
+    --surface: rgba(255,255,255,0.04);
+    --surface-strong: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.09);
+    --border-strong: rgba(255,255,255,0.18);
+    --text-1:#F3F5FA;
+    --text-2:#9AA3B8;
+    --text-3:#5C6478;
+    --cyan:#2DD4BF;
+    --violet:#8B5CF6;
+    --amber:#F5B742;
+    --coral:#F0715A;
+    --cyan-rgb:45,212,191;
+    --violet-rgb:139,92,246;
+    --amber-rgb:245,183,66;
+    --coral-rgb:240,113,90;
+    --on-accent:#06121A;
+    --dot-inactive: rgba(255,255,255,0.18);
+    --nav-pill-bg: rgba(7,9,18,0.55);
+    --nav-pill-border: rgba(255,255,255,0.1);
+    --timeline-empty: rgba(255,255,255,0.02);
+    --gate-bg: rgba(4,5,12,0.88);
+  }
+  html[data-theme="light"]{
+    --bg-grad:
+      radial-gradient(ellipse 800px 500px at 15% 10%, rgba(67,56,202,0.09), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 85% 30%, rgba(251,86,7,0.08), transparent 60%),
+      radial-gradient(ellipse 900px 700px at 50% 100%, rgba(217,119,6,0.07), transparent 60%),
+      #FAFAFC;
+    --surface: rgba(255,255,255,0.6);
+    --surface-strong: rgba(255,255,255,0.82);
+    --border: rgba(15,23,42,0.09);
+    --border-strong: rgba(15,23,42,0.18);
+    --text-1:#12141F;
+    --text-2:#565B72;
+    --text-3:#9297AD;
+    --cyan:#4338CA;
+    --violet:#FB5607;
+    --amber:#D97706;
+    --coral:#E11D48;
+    --cyan-rgb:67,56,202;
+    --violet-rgb:251,86,7;
+    --amber-rgb:217,119,6;
+    --coral-rgb:225,29,72;
+    --on-accent:#FFFFFF;
+    --dot-inactive: rgba(15,23,42,0.18);
+    --nav-pill-bg: rgba(255,255,255,0.82);
+    --nav-pill-border: rgba(15,23,42,0.08);
+    --timeline-empty: rgba(15,23,42,0.035);
+    --gate-bg: rgba(250,250,252,0.92);
+  }
+  html[data-theme="light"] .glass{ box-shadow:0 4px 24px rgba(15,23,42,0.06); }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    background:var(--bg-grad); transition:background .4s ease;
+    color:var(--text-1);
+    font-family:var(--font-body);
+    scroll-behavior:smooth;
+  }
+  body{
+    height:100vh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+  }
+  ::selection{ background:var(--violet); color:#fff; }
+  section{
+    min-height:100vh;
+    width:100%;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    position:relative;
+    display:flex;
+    align-items:center;
+    padding:6vh 7vw;
+    overflow:hidden;
+  }
+  .wrap{ position:relative; z-index:2; width:100%; max-width:1280px; margin:0 auto; }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{ content:''; width:20px; height:1px; background:var(--cyan); display:inline-block; }
+  h1,h2,h3{ font-family:var(--font-display); font-weight:600; letter-spacing:-0.01em; }
+  .grad-text{
+    background:linear-gradient(100deg, #FFFFFF 20%, var(--cyan) 55%, var(--violet) 85%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  p{ color:var(--text-2); line-height:1.65; font-size:15.5px; }
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+  .reveal-delay-1.visible{ transition-delay:.08s; }
+  .reveal-delay-2.visible{ transition-delay:.16s; }
+  .reveal-delay-3.visible{ transition-delay:.24s; }
+  .reveal-delay-4.visible{ transition-delay:.32s; }
+
+  .glass{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
+  .tilt-card{ transform-style:preserve-3d; will-change:transform; transition:transform .15s ease-out, border-color .2s; }
+  .tilt-card:hover{ border-color:var(--border-strong); }
+
+  /* nav dots */
+  #navdots{
+    position:fixed; right:26px; top:50%; transform:translateY(-50%);
+    z-index:50; display:flex; flex-direction:column; gap:14px;
+  }
+  #navdots a{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--dot-inactive);
+    display:block; position:relative;
+    transition:background .3s, transform .3s;
+  }
+  #navdots a::after{
+    content:attr(data-label);
+    position:absolute; right:18px; top:50%; transform:translateY(-50%);
+    font-family:var(--font-mono); font-size:11px; color:var(--text-2);
+    white-space:nowrap; opacity:0; transition:opacity .2s; pointer-events:none;
+  }
+  #navdots a:hover::after{ opacity:1; }
+  #navdots a.active{ background:var(--cyan); transform:scale(1.3); }
+
+  #progress{ position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--cyan),var(--violet)); z-index:60; width:0%; }
+
+  .btn{
+    font-family:var(--font-mono); font-size:13px; letter-spacing:.03em;
+    padding:13px 26px; border-radius:100px; cursor:pointer; border:1px solid transparent;
+    display:inline-flex; align-items:center; gap:10px; transition:transform .15s ease, box-shadow .3s;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:linear-gradient(100deg,var(--cyan),var(--violet)); color:var(--on-accent); font-weight:600; }
+  .btn-primary:hover{ box-shadow:0 0 30px rgba(var(--cyan-rgb),0.35); }
+  .btn-ghost{ border-color:var(--border-strong); color:var(--text-1); background:transparent; }
+  .btn-ghost:hover{ background:var(--surface-strong); }
+
+  .badge{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.05em;
+    padding:5px 12px; border-radius:100px; border:1px solid var(--border-strong);
+    color:var(--text-2); text-transform:uppercase;
+  }
+
+  #hero-canvas{ position:absolute; inset:0; z-index:0; }
+  .grid-floor{
+    position:absolute; left:0; right:0; bottom:-10%; height:70%;
+    background-image:
+      linear-gradient(rgba(var(--violet-rgb),0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--violet-rgb),0.18) 1px, transparent 1px);
+    background-size:60px 60px;
+    transform:perspective(500px) rotateX(60deg);
+    -webkit-mask-image:linear-gradient(to top, black, transparent 85%);
+    mask-image:linear-gradient(to top, black, transparent 85%);
+    z-index:1; animation:floorMove 6s linear infinite;
+  }
+  @keyframes floorMove{ from{ background-position:0 0,0 0; } to{ background-position:0 60px,60px 0; } }
+
+  .glow{ position:absolute; border-radius:50%; filter:blur(90px); opacity:.35; pointer-events:none; }
+
+  table{ width:100%; border-collapse:collapse; }
+  th,td{ text-align:left; padding:12px 14px; font-size:13.5px; border-bottom:1px solid var(--border); }
+  th{ font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); font-weight:500; }
+  td{ color:var(--text-1); }
+
+  .section-label{ font-size:clamp(28px,3.4vw,44px); line-height:1.1; margin-bottom:14px; }
+  .kpi{ font-family:var(--font-display); font-size:clamp(30px,3vw,42px); font-weight:700; }
+
+  @media (max-width:860px){
+    section{ padding:9vh 6vw 7vh; align-items:flex-start; }
+    .wrap{ padding-bottom:2vh; }
+    #navdots{
+      top:auto; bottom:14px; right:50%; transform:translateX(50%);
+      flex-direction:row; gap:9px; background:var(--nav-pill-bg);
+      border:1px solid var(--nav-pill-border);
+      padding:8px 12px; border-radius:100px; backdrop-filter:blur(8px);
+    }
+    #navdots a::after{ display:none; }
+    .grid-2, .grid-3, .grid-4{ grid-template-columns:1fr !important; }
+    #timeline{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    #timeline > div{ min-width:600px; }
+    table{ min-width:480px; }
+    .glass table{ display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .glow{ width:220px !important; height:220px !important; opacity:0.25 !important; }
+    .sr-hint{ bottom:64px; }
+    .kpi{ font-size:28px; }
+    h1{ line-height:1.08 !important; }
+  }
+  @media (max-width:480px){
+    section{ padding:8vh 5.5vw 7vh; }
+    .grid-floor{ background-size:44px 44px; }
+  }
+  @media (pointer:coarse){
+    .tilt-card:active{ transform:scale(0.985); }
+  }
+  .sr-hint{ position:absolute; bottom:34px; left:7vw; display:flex; align-items:center; gap:10px; color:var(--text-3); font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; }
+  .sr-hint .arrow{ animation:bounce 1.8s infinite; }
+  @keyframes bounce{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+
+  /* theme toggle */
+  #theme-toggle{
+    position:fixed; top:24px; right:26px; z-index:55;
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border); border-radius:100px;
+    padding:6px; cursor:pointer; backdrop-filter:blur(10px);
+  }
+  #theme-toggle .track{
+    width:44px; height:24px; border-radius:100px; background:rgba(var(--cyan-rgb),0.18);
+    position:relative; transition:background .3s;
+  }
+  #theme-toggle .thumb{
+    width:18px; height:18px; border-radius:50%; background:var(--cyan);
+    position:absolute; top:3px; left:3px; transition:left .3s cubic-bezier(.4,0,.2,1);
+    display:flex; align-items:center; justify-content:center; font-size:11px;
+  }
+  html[data-theme="light"] #theme-toggle .thumb{ left:23px; }
+
+  /* contact button + modal */
+  #contact-btn{
+    position:fixed; bottom:26px; left:26px; z-index:55;
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border); border-radius:100px;
+    padding:11px 18px; cursor:pointer; color:var(--text-1); backdrop-filter:blur(10px);
+    transition:border-color .2s;
+  }
+  #contact-btn:hover{ border-color:var(--border-strong); }
+  #contact-overlay{
+    position:fixed; inset:0; z-index:80; background:var(--gate-bg);
+    display:none; align-items:center; justify-content:center; backdrop-filter:blur(6px);
+    padding:20px;
+  }
+  #contact-overlay.open{ display:flex; }
+  #contact-card{
+    width:100%; max-width:400px; background:var(--surface-strong); border:1px solid var(--border-strong);
+    border-radius:20px; padding:34px; position:relative; backdrop-filter:blur(20px);
+  }
+  #contact-card h3{ font-size:22px; margin-bottom:6px; }
+  #contact-card p.sub{ font-size:13px; color:var(--text-2); margin-bottom:24px; font-family:var(--font-body); }
+  .contact-row{
+    display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid var(--border);
+    text-decoration:none; color:var(--text-1);
+  }
+  .contact-row:last-child{ border-bottom:none; }
+  .contact-row .ic{
+    width:36px; height:36px; border-radius:10px; flex:none;
+    background:rgba(var(--cyan-rgb),0.15); color:var(--cyan);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:14px;
+  }
+  .contact-row .txt{ display:flex; flex-direction:column; gap:2px; }
+  .contact-row .txt strong{ font-size:13.5px; font-weight:600; }
+  .contact-row .txt span{ font-size:12px; color:var(--text-2); font-family:var(--font-mono); }
+  #contact-close{
+    position:absolute; top:18px; right:18px; width:30px; height:30px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--border); color:var(--text-2);
+    cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center;
+  }
+
+  /* passcode gate */
+  #gate{
+    position:fixed; inset:0; z-index:100; background:var(--bg-grad);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    transition:opacity .5s ease, visibility .5s ease;
+  }
+  #gate.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  #gate-card{
+    width:100%; max-width:380px; text-align:center;
+    background:var(--surface-strong); border:1px solid var(--border-strong); border-radius:20px;
+    padding:44px 34px; backdrop-filter:blur(20px);
+  }
+  #gate-card .lock{
+    width:52px; height:52px; margin:0 auto 20px; border-radius:14px;
+    background:linear-gradient(135deg,var(--cyan),var(--violet));
+    display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--on-accent);
+  }
+  #gate-card h2{ font-size:21px; margin-bottom:8px; }
+  #gate-card p{ font-size:13px; margin-bottom:22px; }
+  #gate-input{
+    width:100%; font-family:var(--font-mono); font-size:15px; letter-spacing:.1em; text-align:center;
+    text-transform:uppercase; background:var(--surface); border:1px solid var(--border-strong);
+    border-radius:12px; padding:13px; color:var(--text-1); outline:none; margin-bottom:14px;
+  }
+  #gate-input:focus{ border-color:var(--cyan); }
+  #gate-submit{ width:100%; justify-content:center; }
+  #gate-error{ font-size:12px; color:var(--coral); margin-top:12px; font-family:var(--font-mono); min-height:14px; }
+  @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+  .shake{ animation:shake .3s; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div id="gate-card">
+    <div class="lock">&#128274;</div>
+    <h2>This proposal is private</h2>
+    <p>Enter the passcode shared with you to view the ADRES CRM proposal.</p>
+    <input id="gate-input" type="text" placeholder="PASSCODE" autocomplete="off" maxlength="20" />
+    <button class="btn btn-primary" id="gate-submit" onclick="checkPasscode()">Unlock <span>&rarr;</span></button>
+    <div id="gate-error"></div>
+  </div>
+</div>
+
+<div id="theme-toggle" onclick="toggleTheme()" role="button" aria-label="Toggle light and dark mode">
+  <div class="track">
+    <div class="thumb" id="theme-thumb">&#9728;</div>
+  </div>
+</div>
+
+<button id="contact-btn" onclick="document.getElementById('contact-overlay').classList.add('open')">
+  <span>&#9993;</span> Contact Karim
+</button>
+
+<div id="contact-overlay">
+  <div id="contact-card">
+    <button id="contact-close" onclick="document.getElementById('contact-overlay').classList.remove('open')">&times;</button>
+    <h3>Let's talk</h3>
+    <p class="sub">Reach out directly to discuss this proposal.</p>
+    <a class="contact-row" href="tel:+971562037076">
+      <div class="ic">&#128222;</div>
+      <div class="txt"><strong>Phone (UAE)</strong><span>+971 56 203 7076</span></div>
+    </a>
+    <a class="contact-row" href="tel:+201010136292">
+      <div class="ic">&#128222;</div>
+      <div class="txt"><strong>Phone (Egypt)</strong><span>+20 10 1013 6292</span></div>
+    </a>
+    <a class="contact-row" href="mailto:karim.magdee@gmail.com">
+      <div class="ic">&#9993;</div>
+      <div class="txt"><strong>Email</strong><span>karim.magdee@gmail.com</span></div>
+    </a>
+    <a class="contact-row" href="https://github.com/karimmagdee" target="_blank" rel="noopener">
+      <div class="ic">&#60;/&#62;</div>
+      <div class="txt"><strong>GitHub</strong><span>github.com/karimmagdee</span></div>
+    </a>
+  </div>
+</div>
+
+<div id="progress"></div>
+<div id="navdots"></div>
+
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="grid-floor"></div>
+  <div class="glow" style="width:520px;height:520px;background:var(--violet);top:-10%;right:-8%;"></div>
+  <div class="wrap">
+    <div class="eyebrow reveal">ADRES &middot; ZOHO CRM &middot; TECHNICAL PROPOSAL</div>
+    <h1 class="reveal reveal-delay-1" style="font-size:clamp(38px,6.4vw,84px); line-height:1.02; max-width:15ch;">
+      One CRM.<br/>Three ventures.<br/><span class="grad-text">Zero silos.</span>
+    </h1>
+    <p class="reveal reveal-delay-2" style="max-width:540px; font-size:17px; margin-top:24px;">
+      A 6-week engagement to architect a unified Zoho CRM for ThinkProp, Tayaseer and Oayana — turning three fragmented data worlds into one source of truth.
+    </p>
+    <div class="reveal reveal-delay-3" style="display:flex; gap:14px; margin-top:38px; flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="document.getElementById('investment').scrollIntoView()">View the proposal <span>&rarr;</span></button>
+      <button class="btn btn-ghost" onclick="document.getElementById('approach').scrollIntoView()">See the approach</button>
+    </div>
+  </div>
+  <div class="sr-hint reveal reveal-delay-4"><span>SCROLL</span><span class="arrow">&darr;</span></div>
+</section>
+
+<section id="context">
+  <div class="glow" style="width:420px;height:420px;background:var(--cyan); bottom:-15%; left:-10%;"></div>
+  <div class="wrap">
+    <div class="eyebrow reveal">The problem</div>
+    <h2 class="section-label reveal reveal-delay-1">Three ventures. Three data worlds.</h2>
+    <p class="reveal reveal-delay-2" style="max-width:620px; margin-bottom:44px;">Customer data lives in separate Freshdesk instances and legacy databases per venture — there is no single, trusted profile of a customer across ADRES.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;" class="grid-2">
+      <div class="glass tilt-card reveal reveal-delay-3" style="padding:30px; border-color:rgba(var(--coral-rgb),0.25);">
+        <div class="badge" style="border-color:rgba(var(--coral-rgb),0.4); color:var(--coral);">Current state</div>
+        <ul style="margin-top:18px; display:flex; flex-direction:column; gap:12px; list-style:none;">
+          <li style="color:var(--text-2); font-size:14.5px;">&#10007;&nbsp; 3 independent Freshdesk instances</li>
+          <li style="color:var(--text-2); font-size:14.5px;">&#10007;&nbsp; Siloed legacy databases per venture</li>
+          <li style="color:var(--text-2); font-size:14.5px;">&#10007;&nbsp; No unified customer / lead profile</li>
+          <li style="color:var(--text-2); font-size:14.5px;">&#10007;&nbsp; Manual, inconsistent data handling</li>
+          <li style="color:var(--text-2); font-size:14.5px;">&#10007;&nbsp; AI and marketing automation underused</li>
+        </ul>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-4" style="padding:30px; border-color:rgba(var(--cyan-rgb),0.28);">
+        <div class="badge" style="border-color:rgba(var(--cyan-rgb),0.45); color:var(--cyan);">Target state</div>
+        <ul style="margin-top:18px; display:flex; flex-direction:column; gap:12px; list-style:none;">
+          <li style="color:var(--text-1); font-size:14.5px;">&#10003;&nbsp; One centralized Zoho CRM instance</li>
+          <li style="color:var(--text-1); font-size:14.5px;">&#10003;&nbsp; Clean, deduplicated golden-record profiles</li>
+          <li style="color:var(--text-1); font-size:14.5px;">&#10003;&nbsp; Documented schema across Accounts, Leads, Deals</li>
+          <li style="color:var(--text-1); font-size:14.5px;">&#10003;&nbsp; Automation and SLA rules per business unit</li>
+          <li style="color:var(--text-1); font-size:14.5px;">&#10003;&nbsp; A sprint-ready backlog for the CX team</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="approach">
+  <div class="wrap">
+    <div class="eyebrow reveal">Proposed approach</div>
+    <h2 class="section-label reveal reveal-delay-1">A four-stage delivery methodology</h2>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:40px;" class="grid-4">
+      <div class="glass tilt-card reveal reveal-delay-1" style="padding:26px;">
+        <div style="font-family:var(--font-mono); color:var(--cyan); font-size:12px; letter-spacing:.05em;">01 / DISCOVER</div>
+        <h3 style="font-size:19px; margin:14px 0 10px;">Stakeholder discovery</h3>
+        <p style="font-size:13.5px;">Structured interviews across Product, Sales, Tech and Marketing in all 3 ventures.</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-2" style="padding:26px;">
+        <div style="font-family:var(--font-mono); color:var(--cyan); font-size:12px; letter-spacing:.05em;">02 / DEFINE</div>
+        <h3 style="font-size:19px; margin:14px 0 10px;">Data strategy</h3>
+        <p style="font-size:13.5px;">Audit legacy/Freshdesk data, define dedup rules and a zero-loss migration path.</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-3" style="padding:26px;">
+        <div style="font-family:var(--font-mono); color:var(--violet); font-size:12px; letter-spacing:.05em;">03 / DESIGN</div>
+        <h3 style="font-size:19px; margin:14px 0 10px;">Zoho architecture</h3>
+        <p style="font-size:13.5px;">Schema, fields, automation, omnichannel and integration blueprints.</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-4" style="padding:26px;">
+        <div style="font-family:var(--font-mono); color:var(--violet); font-size:12px; letter-spacing:.05em;">04 / DELIVER</div>
+        <h3 style="font-size:19px; margin:14px 0 10px;">Document and handover</h3>
+        <p style="font-size:13.5px;">Consolidated CRM requirement doc plus a prioritized sprint-ready backlog.</p>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-4" style="margin-top:50px;">
+      <div class="eyebrow" style="margin-bottom:20px;">6-week roadmap</div>
+      <div id="timeline" class="glass" style="padding:28px 30px;"></div>
+    </div>
+  </div>
+</section>
+
+<section id="deliverables">
+  <div class="glow" style="width:460px;height:460px;background:var(--violet); top:10%; right:-12%;"></div>
+  <div class="wrap">
+    <div class="eyebrow reveal">Effort &amp; deliverables</div>
+    <h2 class="section-label reveal reveal-delay-1">~30 consultant-days, five signed-off artifacts</h2>
+    <div style="display:grid; grid-template-columns:1.1fr 1.4fr; gap:22px; margin-top:36px; align-items:stretch;" class="grid-2">
+      <div class="glass tilt-card reveal reveal-delay-2" style="padding:30px; display:flex; flex-direction:column; justify-content:center;">
+        <canvas id="effort-donut" width="260" height="260" style="margin:0 auto; display:block;"></canvas>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:18px; font-family:var(--font-mono); font-size:11.5px;">
+          <span style="color:var(--cyan);">&#9679; Discovery 8d</span>
+          <span style="color:var(--violet);">&#9679; Data 5d</span>
+          <span style="color:var(--amber);">&#9679; Architecture 12d</span>
+          <span style="color:var(--coral);">&#9679; Handover 5d</span>
+        </div>
+      </div>
+      <div class="glass reveal reveal-delay-3" style="padding:10px 26px;">
+        <table>
+          <tr><th>ID</th><th>Deliverable</th><th>Phase</th></tr>
+          <tr><td style="font-family:var(--font-mono); color:var(--cyan);">D-01</td><td>Stakeholder Discovery Summary</td><td>Wk 1&ndash;2</td></tr>
+          <tr><td style="font-family:var(--font-mono); color:var(--cyan);">D-02</td><td>Data Migration &amp; Cleansing Blueprint</td><td>Wk 3</td></tr>
+          <tr><td style="font-family:var(--font-mono); color:var(--violet);">D-03</td><td>Zoho CRM Technical Specification</td><td>Wk 4&ndash;5</td></tr>
+          <tr><td style="font-family:var(--font-mono); color:var(--violet);">D-04</td><td>System Integration Specification</td><td>Wk 4&ndash;5</td></tr>
+          <tr><td style="font-family:var(--font-mono); color:var(--amber);">D-05</td><td>CX Agile Sprint Map</td><td>Wk 6</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="model">
+  <div class="wrap">
+    <div class="eyebrow reveal">Working model &amp; risk</div>
+    <h2 class="section-label reveal reveal-delay-1">Built to run without surprises</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:36px;" class="grid-2">
+      <div class="glass tilt-card reveal reveal-delay-2" style="padding:28px;">
+        <div class="badge" style="border-color:rgba(var(--cyan-rgb),0.4); color:var(--cyan);">How it runs</div>
+        <div style="margin-top:18px; display:flex; flex-direction:column; gap:16px;">
+          <div><strong style="font-size:14px;">Discovery workshops</strong><p style="font-size:13px; margin-top:4px;">60&ndash;90 min structured sessions per team/venture; notes shared within 24h.</p></div>
+          <div><strong style="font-size:14px;">Documentation standard</strong><p style="font-size:13px; margin-top:4px;">BRD/TRD templates for every deliverable, diagrams in a shared workspace.</p></div>
+          <div><strong style="font-size:14px;">Governance cadence</strong><p style="font-size:13px; margin-top:4px;">Weekly steering check-in with the sponsor plus async phase-gate updates.</p></div>
+          <div><strong style="font-size:14px;">Change control</strong><p style="font-size:13px; margin-top:4px;">Anything outside scope is logged and quoted via a simple change order.</p></div>
+        </div>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-3" style="padding:28px;">
+        <div class="badge" style="border-color:rgba(var(--coral-rgb),0.4); color:var(--coral);">Risks &amp; mitigations</div>
+        <div style="margin-top:18px; display:flex; flex-direction:column; gap:16px;">
+          <div><strong style="font-size:14px;">Conflicting priorities</strong><p style="font-size:13px; margin-top:4px;">Facilitated prioritization workshop with the sponsor.</p></div>
+          <div><strong style="font-size:14px;">Poor legacy data quality</strong><p style="font-size:13px; margin-top:4px;">Extended profiling window flagged early, billed only if material.</p></div>
+          <div><strong style="font-size:14px;">Delayed stakeholder access</strong><p style="font-size:13px; margin-top:4px;">Timeline shifts day-for-day, communicated immediately.</p></div>
+          <div><strong style="font-size:14px;">Scope creep into build/config</strong><p style="font-size:13px; margin-top:4px;">Routed through the change order process, not absorbed silently.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="investment">
+  <div class="glow" style="width:480px;height:480px;background:var(--cyan); top:-15%; left:20%;"></div>
+  <div class="wrap">
+    <div class="eyebrow reveal">Commercial proposal</div>
+    <h2 class="section-label reveal reveal-delay-1">Investment for the 6-week engagement</h2>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:38px;" class="grid-3">
+      <div class="glass tilt-card reveal reveal-delay-1" style="padding:28px;">
+        <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-2);">STANDARD</div>
+        <div class="kpi" style="margin:12px 0 4px;">AED 1,400<span style="font-size:14px; color:var(--text-3);">/day</span></div>
+        <p style="font-size:13px;">Total AED 42,000 &middot; Budget-conscious, standard complexity</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-2" style="padding:28px; border:1.5px solid var(--cyan); box-shadow:0 0 40px rgba(var(--cyan-rgb),0.15);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-family:var(--font-mono); font-size:12px; color:var(--cyan);">RECOMMENDED</div>
+          <div class="badge" style="border-color:var(--cyan); color:var(--cyan);">Best fit</div>
+        </div>
+        <div class="kpi grad-text" style="margin:12px 0 4px;">AED 1,600<span style="font-size:14px; color:var(--text-3); -webkit-text-fill-color:var(--text-3);">/day</span></div>
+        <p style="font-size:13px;">Total AED 48,000 &middot; Multi-venture scope, senior architecture depth</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-3" style="padding:28px;">
+        <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-2);">PREMIUM</div>
+        <div class="kpi" style="margin:12px 0 4px;">AED 1,900<span style="font-size:14px; color:var(--text-3);">/day</span></div>
+        <p style="font-size:13px;">Total AED 57,000 &middot; Compressed timeline / added on-site days</p>
+      </div>
+    </div>
+    <div class="glass reveal reveal-delay-4" style="margin-top:22px; padding:8px 26px;">
+      <table>
+        <tr><th>%</th><th>Trigger</th><th>Amount</th><th>Timing</th></tr>
+        <tr><td>20%</td><td>Mobilization</td><td>AED 9,600</td><td>On SOW signature</td></tr>
+        <tr><td>25%</td><td>D-01 accepted</td><td>AED 12,000</td><td>End of Week 2</td></tr>
+        <tr><td>20%</td><td>D-02 accepted</td><td>AED 9,600</td><td>End of Week 3</td></tr>
+        <tr><td>25%</td><td>D-03 &amp; D-04 accepted</td><td>AED 12,000</td><td>End of Week 5</td></tr>
+        <tr><td>10%</td><td>D-05 signed off</td><td>AED 4,800</td><td>End of Week 6</td></tr>
+      </table>
+    </div>
+    <p style="margin-top:14px; font-size:11.5px; color:var(--text-3);">Rates shown for the recommended option. All figures indicative for a UAE-based freelance engagement — confirm against current market benchmarks.</p>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="eyebrow reveal">Why this engagement fits</div>
+    <h2 class="section-label reveal reveal-delay-1">Rigor built for exactly this document</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:26px 40px; margin-top:40px;" class="grid-2">
+      <div class="reveal reveal-delay-1" style="display:flex; gap:16px;">
+        <div style="width:44px;height:44px;flex:none;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--violet)); display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;color:var(--on-accent);">15</div>
+        <div><strong>15+ years in QA and CX leadership</strong><p style="margin-top:6px;">Across GCC/MENA markets, with Six Sigma, CMMI and ISTQB-certified process discipline.</p></div>
+      </div>
+      <div class="reveal reveal-delay-2" style="display:flex; gap:16px;">
+        <div style="width:44px;height:44px;flex:none;border-radius:12px;background:linear-gradient(135deg,var(--violet),var(--coral)); display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;color:var(--on-accent);">RQ</div>
+        <div><strong>Structured requirements practice</strong><p style="margin-top:6px;">Translates messy, multi-stakeholder input into schemas, rules and testable specs.</p></div>
+      </div>
+      <div class="reveal reveal-delay-3" style="display:flex; gap:16px;">
+        <div style="width:44px;height:44px;flex:none;border-radius:12px;background:linear-gradient(135deg,var(--amber),var(--coral)); display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;color:var(--on-accent);">QA</div>
+        <div><strong>Technical depth</strong><p style="margin-top:6px;">Hands-on with automation and system logic (Playwright, Cypress, Selenium) that carries into CRM workflow design.</p></div>
+      </div>
+      <div class="reveal reveal-delay-4" style="display:flex; gap:16px;">
+        <div style="width:44px;height:44px;flex:none;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--amber)); display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:600;color:var(--on-accent);">AE</div>
+        <div><strong>Regional context</strong><p style="margin-top:6px;">UAE-based, fluent in Arabic and English — runs workshops with all three ventures directly.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="glow" style="width:500px;height:500px;background:var(--violet); bottom:-20%; right:-10%;"></div>
+  <div class="wrap">
+    <div class="eyebrow reveal">Next steps</div>
+    <h2 class="section-label reveal reveal-delay-1">From proposal to kickoff</h2>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:38px;" class="grid-4">
+      <div class="glass tilt-card reveal reveal-delay-1" style="padding:24px;">
+        <div class="kpi" style="font-size:26px; color:var(--cyan);">01</div>
+        <strong style="font-size:14.5px; display:block; margin:10px 0 6px;">Confirm scope &amp; rate</strong>
+        <p style="font-size:12.5px;">Align on the commercial option and finalize the SOW.</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-2" style="padding:24px;">
+        <div class="kpi" style="font-size:26px; color:var(--cyan);">02</div>
+        <strong style="font-size:14.5px; display:block; margin:10px 0 6px;">Schedule discovery</strong>
+        <p style="font-size:12.5px;">Book Week 1&ndash;2 workshop slots across all 3 ventures.</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-3" style="padding:24px;">
+        <div class="kpi" style="font-size:26px; color:var(--violet);">03</div>
+        <strong style="font-size:14.5px; display:block; margin:10px 0 6px;">Provision access</strong>
+        <p style="font-size:12.5px;">Freshdesk exports, legacy DB access and a Zoho sandbox.</p>
+      </div>
+      <div class="glass tilt-card reveal reveal-delay-4" style="padding:24px;">
+        <div class="kpi" style="font-size:26px; color:var(--violet);">04</div>
+        <strong style="font-size:14.5px; display:block; margin:10px 0 6px;">Sign &amp; mobilize</strong>
+        <p style="font-size:12.5px;">Execute the SOW and kick off Phase 1 on the agreed date.</p>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-4" style="margin-top:50px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+      <div>
+        <div style="font-family:var(--font-display); font-size:22px; font-weight:600;">Karim</div>
+        <div style="font-family:var(--font-mono); font-size:12.5px; color:var(--text-2);">Independent QA &amp; CRM Solutions Consultant &middot; UAE</div>
+      </div>
+      <button class="btn btn-primary" onclick="document.getElementById('hero').scrollIntoView()">Back to top &uarr;</button>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  (function initThemeEarly(){
+    var saved = localStorage.getItem('adres-theme');
+    if(saved === 'light' || saved === 'dark'){
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  })();
+
+  var sections = Array.from(document.querySelectorAll('section'));
+  var navdots = document.getElementById('navdots');
+  sections.forEach(function(s){
+    var a = document.createElement('a');
+    a.href = '#' + s.id;
+    a.setAttribute('data-label', s.id.toUpperCase());
+    a.addEventListener('click', function(e){ e.preventDefault(); s.scrollIntoView(); });
+    navdots.appendChild(a);
+  });
+  var dots = Array.from(navdots.children);
+
+  var revealEls = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.15});
+  revealEls.forEach(function(el){ io.observe(el); });
+
+  var secIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var idx = sections.indexOf(e.target);
+        dots.forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+      }
+    });
+  }, {threshold:0.5});
+  sections.forEach(function(s){ secIO.observe(s); });
+
+  var bodyEl = document.body;
+  bodyEl.addEventListener('scroll', function(){
+    var max = bodyEl.scrollHeight - bodyEl.clientHeight;
+    var pct = max > 0 ? (bodyEl.scrollTop / max) * 100 : 0;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  var hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if(hasFinePointer){
+    document.querySelectorAll('.tilt-card').forEach(function(card){
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5;
+        var y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = 'perspective(700px) rotateX(' + (-y*8) + 'deg) rotateY(' + (x*8) + 'deg) translateZ(6px)';
+      });
+      card.addEventListener('mouseleave', function(){
+        card.style.transform = 'perspective(700px) rotateX(0) rotateY(0) translateZ(0)';
+      });
+    });
+  }
+
+  var THEMES = {
+    dark:  { cyan:'#2DD4BF', violet:'#8B5CF6', amber:'#F5B742', coral:'#F0715A', text1:'#F3F5FA', text3:'#5C6478', ambient:0xffffff, ambientOpacity:0.4 },
+    light: { cyan:'#4338CA', violet:'#FB5607', amber:'#D97706', coral:'#E11D48', text1:'#12141F', text3:'#9297AD', ambient:0x818CF8, ambientOpacity:0.5 }
+  };
+  function getTheme(){ return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+
+  function buildTimeline(){
+    var t = THEMES[getTheme()];
+    var el = document.getElementById('timeline');
+    var weeks = 6;
+    var rows = [
+      {name:'Discovery & Workshops', start:1, len:2, label:'D-01', color:t.cyan},
+      {name:'Data Strategy & Blueprint', start:3, len:1, label:'D-02', color:t.violet},
+      {name:'Zoho Architecture & Design', start:4, len:2, label:'D-03 / D-04', color:t.amber},
+      {name:'Handover & Sprint Mapping', start:6, len:1, label:'D-05', color:t.coral}
+    ];
+    var head = '<div style="display:grid; grid-template-columns:200px repeat(6,1fr); gap:0; margin-bottom:14px;">';
+    head += '<div></div>';
+    for(var w=1; w<=weeks; w++){ head += '<div style="font-family:var(--font-mono); font-size:11px; color:var(--text-3); text-align:center;">WK ' + w + '</div>'; }
+    head += '</div>';
+    var body = '';
+    rows.forEach(function(r){
+      body += '<div style="display:grid; grid-template-columns:200px repeat(6,1fr); gap:0; align-items:center; height:46px;">';
+      body += '<div style="font-size:13px; color:var(--text-2);">' + r.name + '</div>';
+      for(var w=1; w<=weeks; w++){
+        var inRange = (w >= r.start && w < r.start + r.len);
+        var isFirst = (w === r.start);
+        body += '<div style="height:26px; margin:0 3px; border-radius:6px;';
+        if(inRange){
+          body += 'background:' + r.color + '22; border:1px solid ' + r.color + '55; display:flex; align-items:center; justify-content:center;';
+          if(isFirst){ body += '"><span style="font-family:var(--font-mono); font-size:10px; color:' + r.color + ';">' + r.label + '</span></div>'; }
+          else { body += '"></div>'; }
+        } else {
+          body += 'background:var(--timeline-empty);"></div>';
+        }
+      }
+      body += '</div>';
+    });
+    el.innerHTML = head + body;
+  }
+  buildTimeline();
+
+  function buildDonut(){
+    var t = THEMES[getTheme()];
+    var canvas = document.getElementById('effort-donut');
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var data = [
+      {v:8, c:t.cyan},
+      {v:5, c:t.violet},
+      {v:12, c:t.amber},
+      {v:5, c:t.coral}
+    ];
+    var total = data.reduce(function(a,b){return a+b.v;},0);
+    var cx = 130, cy = 130, rOuter = 100, rInner = 66;
+    var start = -Math.PI/2;
+    data.forEach(function(seg){
+      var angle = (seg.v/total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rOuter, start, start+angle);
+      ctx.arc(cx, cy, rInner, start+angle, start, true);
+      ctx.closePath();
+      ctx.fillStyle = seg.c;
+      ctx.fill();
+      start += angle;
+    });
+    ctx.fillStyle = t.text1;
+    ctx.font = '600 30px Space Grotesk';
+    ctx.textAlign = 'center';
+    ctx.fillText('30', cx, cy+2);
+    ctx.fillStyle = t.text3;
+    ctx.font = '500 11px JetBrains Mono';
+    ctx.fillText('DAYS TOTAL', cx, cy+22);
+  }
+  buildDonut();
+  document.getElementById('theme-thumb').innerHTML = getTheme() === 'dark' ? '&#127769;' : '&#9728;';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isSmallScreen = window.innerWidth < 700;
+  var threeRefs = null;
+  if(!reduceMotion && window.THREE){
+    var canvas = document.getElementById('hero-canvas');
+    var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:!isSmallScreen});
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+    camera.position.set(0,0, isSmallScreen ? 16 : 13);
+
+    function resize(){
+      var w = window.innerWidth, h = window.innerHeight;
+      renderer.setSize(w,h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isSmallScreen ? 1.5 : 2));
+      camera.aspect = w/h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var group = new THREE.Group();
+    scene.add(group);
+
+    var initTheme = THEMES[getTheme()];
+    var coreGeo = new THREE.IcosahedronGeometry(1.6, 1);
+    var coreMat = new THREE.MeshBasicMaterial({color:initTheme.cyan, wireframe:true, transparent:true, opacity:0.85});
+    var core = new THREE.Mesh(coreGeo, coreMat);
+    group.add(core);
+
+    var clusterKeys = ['cyan','violet','amber'];
+    var clusters = [];
+    var clusterMats = [];
+    for(var c=0; c<3; c++){
+      var clusterGroup = new THREE.Group();
+      var angle0 = (c/3) * Math.PI * 2;
+      var orbitR = 5.2;
+      clusterGroup.position.set(Math.cos(angle0)*orbitR, Math.sin(angle0)*orbitR*0.5, Math.sin(angle0)*orbitR*0.6);
+
+      var pGeo = new THREE.BufferGeometry();
+      var count = isSmallScreen ? 34 : 70;
+      var positions = new Float32Array(count*3);
+      for(var i=0;i<count;i++){
+        var r = 0.9*Math.random()+0.3;
+        var theta = Math.random()*Math.PI*2;
+        var phi = Math.acos((Math.random()*2)-1);
+        positions[i*3] = r*Math.sin(phi)*Math.cos(theta);
+        positions[i*3+1] = r*Math.sin(phi)*Math.sin(theta);
+        positions[i*3+2] = r*Math.cos(phi);
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      var pMat = new THREE.PointsMaterial({color:initTheme[clusterKeys[c]], size:0.06, transparent:true, opacity:0.9});
+      var points = new THREE.Points(pGeo, pMat);
+      clusterGroup.add(points);
+
+      var lineMat = new THREE.LineBasicMaterial({color:initTheme[clusterKeys[c]], transparent:true, opacity:0.25});
+      var lineGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0,0,0),
+        clusterGroup.position.clone()
+      ]);
+      var line = new THREE.Line(lineGeo, lineMat);
+      group.add(line);
+
+      group.add(clusterGroup);
+      clusters.push(clusterGroup);
+      clusterMats.push({points:pMat, line:lineMat});
+    }
+
+    var ambientGeo = new THREE.BufferGeometry();
+    var starCount = isSmallScreen ? 140 : 300;
+    var starPos = new Float32Array(starCount*3);
+    for(var s=0;s<starCount;s++){
+      starPos[s*3] = (Math.random()-0.5)*40;
+      starPos[s*3+1] = (Math.random()-0.5)*24;
+      starPos[s*3+2] = (Math.random()-0.5)*20 - 6;
+    }
+    ambientGeo.setAttribute('position', new THREE.BufferAttribute(starPos,3));
+    var ambientMat = new THREE.PointsMaterial({color:initTheme.ambient, size:0.03, transparent:true, opacity:initTheme.ambientOpacity});
+    var ambient = new THREE.Points(ambientGeo, ambientMat);
+    scene.add(ambient);
+
+    threeRefs = { coreMat:coreMat, clusterMats:clusterMats, clusterKeys:clusterKeys, ambientMat:ambientMat };
+
+    var mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', function(e){
+      mouseX = (e.clientX/window.innerWidth - 0.5);
+      mouseY = (e.clientY/window.innerHeight - 0.5);
+    });
+
+    var heroVisible = true;
+    var heroIO = new IntersectionObserver(function(entries){
+      heroVisible = entries[0].isIntersecting;
+    }, {threshold:0});
+    heroIO.observe(document.getElementById('hero'));
+
+    var clock = new THREE.Clock();
+    function animate(){
+      requestAnimationFrame(animate);
+      if(!heroVisible) return;
+      var t2 = clock.getElapsedTime();
+      core.rotation.y = t2*0.25;
+      core.rotation.x = t2*0.12;
+      group.rotation.y += (mouseX*0.6 - group.rotation.y)*0.03;
+      group.rotation.x += (mouseY*0.3 - group.rotation.x)*0.03;
+      clusters.forEach(function(cl, i){
+        cl.rotation.y = t2*0.4 + i;
+        cl.rotation.x = t2*0.2;
+      });
+      ambient.rotation.y = t2*0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+  function applyThreeTheme(themeName){
+    if(!threeRefs) return;
+    var t = THEMES[themeName];
+    threeRefs.coreMat.color.set(t.cyan);
+    threeRefs.clusterMats.forEach(function(m, i){
+      var hex = t[threeRefs.clusterKeys[i]];
+      m.points.color.set(hex);
+      m.line.color.set(hex);
+    });
+    threeRefs.ambientMat.color.set(t.ambient);
+    threeRefs.ambientMat.opacity = t.ambientOpacity;
+  }
+
+  window.toggleTheme = function(){
+    var current = getTheme();
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('adres-theme', next);
+    document.getElementById('theme-thumb').innerHTML = next === 'dark' ? '&#127769;' : '&#9728;';
+    buildTimeline();
+    buildDonut();
+    applyThreeTheme(next);
+  };
+
+  window.checkPasscode = function(){
+    var input = document.getElementById('gate-input');
+    var val = (input.value || '').trim().toUpperCase();
+    var card = document.getElementById('gate-card');
+    var err = document.getElementById('gate-error');
+    if(val === 'ZOHO'){
+      sessionStorage.setItem('adres_zoho_ok', '1');
+      document.getElementById('gate').classList.add('hidden');
+      err.textContent = '';
+    } else {
+      err.textContent = 'Incorrect passcode. Please try again.';
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
+    }
+  };
+  document.getElementById('gate-input').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ checkPasscode(); }
+  });
+  if(sessionStorage.getItem('adres_zoho_ok') === '1'){
+    document.getElementById('gate').classList.add('hidden');
+  }
+})();
+</script>
+</body>
+</html>
