@@ -198,6 +198,7 @@
     }
     #navdots a::after{ display:none; }
     .grid-2, .grid-3, .grid-4{ grid-template-columns:1fr !important; }
+    .grid-2 > *, .grid-3 > *, .grid-4 > *{ min-width:0; }
     #timeline{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
     #timeline > div{ min-width:600px; }
     table{ min-width:480px; }
@@ -206,6 +207,10 @@
     .sr-hint{ bottom:64px; }
     .kpi{ font-size:28px; }
     h1{ line-height:1.08 !important; }
+    #effort-donut{ width:100%; height:auto; max-width:260px; }
+    #deliverable-tabs{ gap:6px; }
+    .deliv-tab{ font-size:10px; padding:5px 10px; }
+    .deliv-panel table{ min-width:420px; }
   }
   @media (max-width:480px){
     section{ padding:8vh 5.5vw 7vh; }
